@@ -1,3 +1,9 @@
+2/29/2012
+ * Updated to include a connection reset method for the SHTx series by Nathan Isherwood
+1/23/2012
+ * Updated for compatibility with Arduino 1.0 by Mike Grusin, SparkFun Electronics
+6/15/2011
+ * Updated to V4 coefficients and 3.3V operation by Mike Grusin, SparkFun Electronics
 2010-07-23
  * Added SHT7x to list of supported sensors.
  * Fixed temperature offset in humidity calculation.

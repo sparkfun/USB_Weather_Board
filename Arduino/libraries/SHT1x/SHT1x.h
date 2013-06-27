@@ -9,6 +9,7 @@
  * Manages communication with SHT1x series (SHT10, SHT11, SHT15)
  * temperature / humidity sensors from Sensirion (www.sensirion.com).
  *
+ * Updated to include a connection reset method for the SHTx series by Nathan Isherwood 2/29/2012
  * Updated for compatibility with Arduino 1.0 by Mike Grusin, SparkFun Electronics 1/23/2012
  * Updated to V4 coefficients and 3.3V operation by Mike Grusin, SparkFun Electronics 6/15/2011
  *
@@ -26,6 +27,7 @@ class SHT1x
 {
   public:
     SHT1x(int dataPin, int clockPin);
+	  void connectionReset();
     float readHumidity();
     float readTemperatureC();
     float readTemperatureF();

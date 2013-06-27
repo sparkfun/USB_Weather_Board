@@ -9,10 +9,11 @@
  * Manages communication with SHT1x series (SHT10, SHT11, SHT15)
  * temperature / humidity sensors from Sensirion (www.sensirion.com).
  *
+ * Updated to include a connection reset method for the SHTx series by Nathan Isherwood 2/29/2012
  * Updated for compatibility with Arduino 1.0 by Mike Grusin, SparkFun Electronics 1/23/2012
  * Updated to V4 coefficients and 3.3V operation by Mike Grusin, SparkFun Electronics 6/15/2011
- *
  */
+ 
 #if defined(ARDUINO) && ARDUINO >= 100
 #include "Arduino.h"
 #else
@@ -26,10 +27,34 @@ SHT1x::SHT1x(int dataPin, int clockPin)
   _clockPin = clockPin;
 }
 
-
 /* ================  Public methods ================ */
 
 /**
+ * Reset the Connection - (From SHT15 datasheet) 
+ * If communication with the device is lost the following signal
+ * sequence will reset the serial interface: While leaving
+ * DATA high, toggle SCK nine or more times
+ */
+void SHT1x::connectionReset()
+{
+  int i;
+  // Connection reset
+  pinMode(_dataPin, OUTPUT);
+  pinMode(_clockPin, OUTPUT);
+  digitalWrite(_dataPin, HIGH);
+  
+  for(i= 0; i < 10; ++i)
+  {
+    digitalWrite(_clockPin, HIGH);
+    delay(1);
+	digitalWrite(_clockPin, LOW);
+	delay(1);
+  }	
+  
+  digitalWrite(_clockPin, HIGH);
+  
+}
+ /**
  * Reads the current temperature in degrees Celsius
  */
 float SHT1x::readTemperatureC()

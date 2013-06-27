@@ -5,8 +5,10 @@
 // Compile and load onto SparkFun USB Weather Board V3 using Arduino development envrionment,
 // Download from www.arduino.cc
 
-// Uses the SHT15x library by Jonathan Oxer et.al.
-// Supplied with this software distribution, or download from https://github.com/practicalarduino/SHT1x.
+// Set Tools/Board to "Arduino Pro or Pro Mini (3.3V 8MHz) w/ ATmega328"
+
+// Uses the SHT15x library by Jonathan Oxer et.al.  https://github.com/practicalarduino/SHT1x
+// A special version is supplied with this software distribution.
 // Place in your Arduino sketchbook under "libraries/SHT1x"
 
 // Uses the SFE_BMP085 library by SparkFun with math from http://wmrx00.sourceforge.net/Arduino/BMP085-Calcs.pdf
@@ -22,14 +24,25 @@
 // -your friends at SparkFun
 
 // Revision history
-// 1.2 Update all code to be compatible with Arduino 1.0 2012/1/23
-// 1.1 changed sample_rate to 32-bit, max = 4294966 seconds (47 days)
-//     RAM is also getting tight, so removed some error strings and added RAM gauge to menu 2011/08/01
-// 1.0 initial release, 2011/06/27
+// 1.3 2013/6/25
+//     Added code to prevent an intermittent lockup when rebooting; 
+//     now resets the humidity sensor connection before intializing
+//     the BMP085. Many thanks to Nathan Isherwood.
+//     Added plain 'Z' and 'z' as well as CTRL-Z to enter menu
+//     to better support Arduino serial monitor.
+//     Fixed error in rain-gauge constant. Many thanks to Michael Bauer.
+// 1.2 2012/1/23
+//     Update all code to be compatible with Arduino 1.0
+// 1.1 2011/08/01
+//     Changed sample_rate to 32-bit, max = 4294966 seconds (47 days)
+//     RAM is also getting tight, so removed some error strings and
+//     added RAM gauge to menu.
+// 1.0 2011/06/27
+//     Initial release, 
 
 // firmware version
 const char version_major = 1;
-const char version_minor = 2;
+const char version_minor = 4;
 
 // external libraries
 #include <SHT1x.h> // SHT15 humidity sensor library
@@ -78,8 +91,8 @@ volatile unsigned long raintime, rainlast, raininterval, rain;
 const int BATT_RATIO = 63.3271; // divide ADC from BATT_LVL by this to get volts
 const float WIND_RPM_TO_MPH = 22.686745; // divide RPM by this for velocity
 const float WIND_RPM_TO_MPS = 50.748803; // divide RPM by this for meters per second
-const float RAIN_BUCKETS_TO_INCHES = 0.0086206896; // multiply bucket tips by this for inches
-const float RAIN_BUCKETS_TO_MM = 0.21896551; // multiply bucket tips by this for mm 
+const float RAIN_BUCKETS_TO_INCHES = 0.014815; // multiply bucket tips by this for inches
+const float RAIN_BUCKETS_TO_MM = 0.376296; // multiply bucket tips by this for mm 
 const unsigned int ZERODELAY = 4000; // ms, zero RPM if no result for this time period (see irq below)
 
 // sensor objects
@@ -201,12 +214,20 @@ void setup()
 
   // get settings from EEPROM (use defaults if EEPROM has not been used)
   retrieveEEPROMsettings();
-  
+ 
   // initialize serial port
   Serial.begin(baud_rate);
   Serial.println();
   Serial.println("RESET");
-
+  
+  // Reset the humidity sensor connection so that the I2C bus can be accessed
+  TWCR &= ~(_BV(TWEN)); // turn off I2C enable bit so we can access the SHT15 humidity sensor 
+  digitalWrite(XCLR,LOW); // disable the BMP085 while resetting humidity sensor
+  humidity_sensor.connectionReset(); // reset the humidity sensor connection
+  TWCR |= _BV(TWEN); // turn on I2C enable bit so we can access the BMP085 pressure sensor
+  digitalWrite(XCLR,HIGH); // enable BMP085
+  delay(10); // wait for the BMP085 pressure sensor to become ready after reset
+  
   // initialize BMP085 pressure sensor
   if (pressure_sensor.begin() == 0)
     error(1);
@@ -721,7 +742,9 @@ void loop()
   {
     while (Serial.available())
     {
-      if (Serial.read() == 0x1A) // CTRL-Z
+      status = Serial.read();
+      // check for CTRL-Z 'Z' or 'z'
+      if ((status == 0x1A) || (toupper(status) == 'Z'))
       {
         menu(); // display the menu and allow settings to be changed
         loopend = millis(); // we're done with the menu, break out of the do-while
