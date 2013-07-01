@@ -31,6 +31,8 @@
 //     Added plain 'Z' and 'z' as well as CTRL-Z to enter menu
 //     to better support Arduino serial monitor.
 //     Fixed error in rain-gauge constant. Many thanks to Michael Bauer.
+//     Added reset to factory defaults option to menu.
+//     Moved constant strings to flash (freed over 1K bytes!)
 // 1.2 2012/1/23
 //     Update all code to be compatible with Arduino 1.0
 // 1.1 2011/08/01
@@ -38,11 +40,11 @@
 //     RAM is also getting tight, so removed some error strings and
 //     added RAM gauge to menu.
 // 1.0 2011/06/27
-//     Initial release, 
+//     Initial release
 
 // firmware version
 const char version_major = 1;
-const char version_minor = 4;
+const char version_minor = 3;
 
 // external libraries
 #include <SHT1x.h> // SHT15 humidity sensor library
@@ -218,7 +220,7 @@ void setup()
   // initialize serial port
   Serial.begin(baud_rate);
   Serial.println();
-  Serial.println("RESET");
+  Serial.println(F("RESET"));
   
   // Reset the humidity sensor connection so that the I2C bus can be accessed
   TWCR &= ~(_BV(TWEN)); // turn off I2C enable bit so we can access the SHT15 humidity sensor 
@@ -420,7 +422,7 @@ void loop()
     case CSV: // data_format: comma-separated values
     {
       // number after values is number of digits after decimal point to print
-      Serial.print("$");
+      Serial.print(F("$"));
       printComma();
       Serial.print(SHT15_temp,1);
       printComma();
@@ -442,7 +444,7 @@ void loop()
       }
       printComma();
       // Serial.print(BMP085_temp,1);  // for CSV format, we'll only output the SHT15 temperature
-      // Serial.print(",");
+      // Serial.print(F(","));
       Serial.print(TEMT6000_light,1);
       printComma();
       if (weather_meters_attached)
@@ -464,7 +466,7 @@ void loop()
       }
       Serial.print(batt_volts,2);
       printComma();
-      Serial.print("*");
+      Serial.print(F("*"));
       Serial.println();
     }
     break;
@@ -474,155 +476,155 @@ void loop()
       ansiHome();
       Serial.println();
   
-      Serial.print("SHT15 temperature:");
+      Serial.print(F("SHT15 temperature:"));
       ansiTab();
       ansiTab();
       Serial.print(SHT15_temp,1);
-      Serial.print(" deg ");
+      Serial.print(F(" deg "));
       switch (general_units)
       {
         case ENGLISH:
-          Serial.print("F ");
+          Serial.print(F("F "));
           ansiTab();
           if ((SHT15_temp > 60) && (SHT15_temp < 85)) pass(); else fail();
           break;
         case SI:
-          Serial.print("C ");
+          Serial.print(F("C "));
           ansiTab();
           if ((SHT15_temp > 15) && (SHT15_temp < 30)) pass(); else fail();
           break;
       }
 
-      Serial.print("SHT15 humidity:  ");
+      Serial.print(F("SHT15 humidity:  "));
       ansiTab();
       ansiTab();
       Serial.print(SHT15_humidity,0);
-      Serial.print("% ");
+      Serial.print(F("% "));
       ansiTab();
       ansiTab();
       if ((SHT15_humidity > 10) && (SHT15_humidity < 90)) pass(); else fail();
 
 
-      Serial.print("SHT15 dewpoint:  ");
+      Serial.print(F("SHT15 dewpoint:  "));
       ansiTab();
       ansiTab();
       Serial.print(SHT15_dewpoint,1);
-      Serial.print(" deg ");
+      Serial.print(F(" deg "));
       switch (general_units)
       {
         case ENGLISH:
-          Serial.println("F ");
+          Serial.println(F("F "));
           break;
         case SI:
-          Serial.println("C ");
+          Serial.println(F("C "));
           break;
       }
 
-      Serial.print("BMP085 pressure:");
+      Serial.print(F("BMP085 pressure:"));
       ansiTab();
       ansiTab();
       switch (pressure_units) // change decimal point for different units
       {
         case MBAR:
           Serial.print(BMP085_pressure,2);
-          Serial.print(" mbar ");
+          Serial.print(F(" mbar "));
           ansiTab();
           if ((BMP085_pressure > 900) && (BMP085_pressure < 1100)) pass(); else fail();
           break;
         case INHG:
           Serial.print(BMP085_pressure,3);
-          Serial.print(" in Hg ");
+          Serial.print(F(" in Hg "));
           ansiTab();
           if ((BMP085_pressure > 25) && (BMP085_pressure < 35)) pass(); else fail();
           break;
         case PSI:
           Serial.print(BMP085_pressure,4);
-          Serial.print(" PSI ");
+          Serial.print(F(" PSI "));
           ansiTab();
           if ((BMP085_pressure > 13) && (BMP085_pressure < 15)) pass(); else fail();
           break;
       }
 
-      Serial.print("BMP085 temperature:");
+      Serial.print(F("BMP085 temperature:"));
       ansiTab();
       ansiTab();
       Serial.print(BMP085_temp,1);
-      Serial.print(" deg ");
+      Serial.print(F(" deg "));
       switch (general_units)
       {
         case ENGLISH:
-          Serial.print("F ");
+          Serial.print(F("F "));
           ansiTab();
           if ((BMP085_temp > 60) && (BMP085_temp < 90)) pass(); else fail();
           break;
         case SI:
-          Serial.print("C ");
+          Serial.print(F("C "));
           ansiTab();
           if ((BMP085_temp > 15) && (BMP085_temp < 35)) pass(); else fail();
           break;
       }
   
-      Serial.print("TEMT6000 light:  ");
+      Serial.print(F("TEMT6000 light:  "));
       ansiTab();
       ansiTab();
       Serial.print(TEMT6000_light,1);
-      Serial.print("% ");
+      Serial.print(F("% "));
       ansiTab();
       ansiTab();
       if ((TEMT6000_light > 0) && (TEMT6000_light < 100)) pass(); else fail();
   
       if (weather_meters_attached)
       {
-        Serial.print("Weather meters wind speed:");
+        Serial.print(F("Weather meters wind speed:"));
         ansiTab();
         Serial.print(WM_wspeed,1);
         switch (general_units)
         {
           case ENGLISH:
-            Serial.print(" MPH ");
+            Serial.print(F(" MPH "));
             ansiTab();
             if (WM_wspeed > 0.0) pass(); else fail();
             break;
           case SI:
-            Serial.print(" m/s ");
+            Serial.print(F(" m/s "));
             ansiTab();
             ansiTab();
             if (WM_wspeed > 0.0) pass(); else fail();
             break;
         }
     
-        Serial.print("Weather meters wind direction:");
+        Serial.print(F("Weather meters wind direction:"));
         ansiTab();
         Serial.print(WM_wdirection,0);
-        Serial.print(" degrees ");
+        Serial.print(F(" degrees "));
         ansiTab();
         // direction will read -1 if wind direction sensor is disconnected or faulty
         if (WM_wdirection != -1) pass(); else fail();
     
-        Serial.print("Weather meters rainfall:");
+        Serial.print(F("Weather meters rainfall:"));
         ansiTab();
         switch (general_units)
         {
           case ENGLISH:
             Serial.print(WM_rainfall,2);
-            Serial.print(" inches ");
+            Serial.print(F(" inches "));
             ansiTab();
             if (WM_rainfall > 0.05) pass(); else fail();
             break;
           case SI:
             Serial.print(WM_rainfall,0);
-            Serial.print(" mm ");
+            Serial.print(F(" mm "));
             ansiTab();
             ansiTab();
             if (WM_rainfall > 0.5) pass(); else fail();
             break;
         }
       }
-      Serial.print("External power:  ");
+      Serial.print(F("External power:  "));
       ansiTab();
       ansiTab();
       Serial.print(batt_volts,2);
-      Serial.print(" Volts ");
+      Serial.print(F(" Volts "));
       ansiTab();
       if ((batt_volts > 3.5) && (batt_volts < 13.0)) pass(); else fail();
       Serial.println();
@@ -639,89 +641,89 @@ void loop()
       {
         case 0:
           LCDline1();
-          Serial.print("temp: ");
+          Serial.print(F("temp: "));
           Serial.print(SHT15_temp,1);
           switch (general_units)
           {
             case ENGLISH:
-              Serial.print(" F");
+              Serial.print(F(" F"));
               break;
             case SI:
-              Serial.print(" C");
+              Serial.print(F(" C"));
               break;
           }
           LCDline2();
-          Serial.print("humid: ");
+          Serial.print(F("humid: "));
           Serial.print(SHT15_humidity,0);
-          Serial.print("%");
+          Serial.print(F("%"));
           break;
         case 1:
           LCDline1();
-          Serial.print("baro: ");
+          Serial.print(F("baro: "));
           switch (pressure_units) // change decimal point for different units
           {
             case MBAR:
               Serial.print(BMP085_pressure,2);
-              Serial.print(" mb");
+              Serial.print(F(" mb"));
               break;
             case INHG:
               Serial.print(BMP085_pressure,3);
-              Serial.print(" in");
+              Serial.print(F(" in"));
               break;
             case PSI:
               Serial.print(BMP085_pressure,3);
-              Serial.print(" PSI");
+              Serial.print(F(" PSI"));
               break;
           }
           LCDline2();
-          Serial.print("dewp: ");
+          Serial.print(F("dewp: "));
           Serial.print(SHT15_dewpoint,1);
           switch (general_units)
           {
             case ENGLISH:
-              Serial.print(" F");
+              Serial.print(F(" F"));
               break;
             case SI:
-              Serial.print(" C");
+              Serial.print(F(" C"));
               break;
           }
           break;
         case 2:
           LCDline1();
-          Serial.print("wind: ");
+          Serial.print(F("wind: "));
           Serial.print(WM_wspeed,1);
           switch (general_units)
           {
             case ENGLISH:
-              Serial.print(" MPH");
+              Serial.print(F(" MPH"));
               break;
             case SI:
-              Serial.print(" m/s");
+              Serial.print(F(" m/s"));
               break;
           }
           LCDline2();
-          Serial.print("dir: ");
+          Serial.print(F("dir: "));
           Serial.print(WM_wdirection,0);
-          Serial.print(" deg");
+          Serial.print(F(" deg"));
           break;
         case 3:
           LCDline1();
-          Serial.print("rain: ");
+          Serial.print(F("rain: "));
           switch (general_units)
           {
             case ENGLISH:
               Serial.print(WM_rainfall,2);
-              Serial.print(" in");
+              Serial.print(F(" in"));
               break;
             case SI:
               Serial.print(WM_rainfall,0);
-              Serial.print(" mm");
+              Serial.print(F(" mm"));
               break;
           }
           LCDline2();
-          Serial.print("light: ");
+          Serial.print(F("light: "));
           Serial.print(TEMT6000_light,1);
-          Serial.print("%");
+          Serial.print(F("%"));
           break;
       }
       LCDstate++;
@@ -815,69 +817,70 @@ void menu()
   // print out a menu of choices, with current settings in (parenthesis)
 
   Serial.println();
-  Serial.print("SparkFun USB Weather Board V3 firmware version ");
-  Serial.print(version_major,DEC); Serial.print(".");  Serial.println(version_minor,DEC);
-  Serial.print("free RAM: "); Serial.print(freeMemory()); Serial.println(" bytes");
+  Serial.print(F("SparkFun USB Weather Board V3 firmware version "));
+  Serial.print(version_major,DEC); Serial.print(F("."));  Serial.println(version_minor,DEC);
+  Serial.print(F("free RAM: ")); Serial.print(freeMemory()); Serial.println(F(" bytes"));
   Serial.println();
   
   while (!done)
   {
-    Serial.print("1. Data format (");
+    Serial.print(F("1. Data format ("));
     switch (data_format)
     {
-      case CSV: Serial.print("CSV"); break;
-      case ANSI: Serial.print("ANSI"); break;
-      case LCD: Serial.print("LCD"); break;
+      case CSV: Serial.print(F("CSV")); break;
+      case ANSI: Serial.print(F("ANSI")); break;
+      case LCD: Serial.print(F("LCD")); break;
     }
-    Serial.println(")");
+    Serial.println(F(")"));
 
-    Serial.print("2. General units (");
+    Serial.print(F("2. General units ("));
     switch (general_units)
     {
-      case ENGLISH: Serial.print("English"); break;
-      case SI: Serial.print("SI"); break;
+      case ENGLISH: Serial.print(F("English")); break;
+      case SI: Serial.print(F("SI")); break;
     }
-    Serial.println(")");
+    Serial.println(F(")"));
 
-    Serial.print("3. Sample rate (");
+    Serial.print(F("3. Sample rate ("));
     Serial.print(sample_rate,DEC);
-    Serial.println(")");
+    Serial.println(F(")"));
 
-    Serial.print("4. Pressure units (");
+    Serial.print(F("4. Pressure units ("));
     switch (pressure_units)
     {
-      case MBAR: Serial.print("mbar"); break;
-      case INHG: Serial.print("inches Hg"); break;
-      case PSI: Serial.print("PSI"); break;
+      case MBAR: Serial.print(F("mbar")); break;
+      case INHG: Serial.print(F("inches Hg")); break;
+      case PSI: Serial.print(F("PSI")); break;
     }
-    Serial.println(")");
+    Serial.println(F(")"));
 
-    Serial.print("5. Pressure type (");
+    Serial.print(F("5. Pressure type ("));
     switch (pressure_type)
     {
-      case RELATIVE: Serial.print("relative"); break;
-      case ABSOLUTE: Serial.print("absolute"); break;
+      case RELATIVE: Serial.print(F("relative")); break;
+      case ABSOLUTE: Serial.print(F("absolute")); break;
     }
-    Serial.println(")");
+    Serial.println(F(")"));
 
-    Serial.print("6. Station altitude (");
+    Serial.print(F("6. Station altitude ("));
     Serial.print(altitude,DEC);
-    Serial.println(" meters)");
+    Serial.println(F(" meters)"));
 
-    Serial.print("7. Baud rate (");
+    Serial.print(F("7. Baud rate ("));
     Serial.print(baud_rate,DEC);
-    Serial.println(" baud)");
+    Serial.println(F(" baud)"));
 
-    Serial.println("8. Zero rain counter");
+    Serial.println(F("8. Zero rain counter"));
 
-    Serial.print("9. Weather Meters attached (");
+    Serial.print(F("9. Weather Meters attached ("));
     if (weather_meters_attached)
-      Serial.println("yes)");
+      Serial.println(F("yes)"));
     else
-      Serial.println("no)");
+      Serial.println(F("no)"));
 
-    Serial.println("X. Exit (don't save changes to EEPROM)");
-    Serial.println("S. Save (save changes to EEPROM)");
+    Serial.println(F("R. Reset to factory defaults"));
+    Serial.println(F("X. Exit (don't save changes to EEPROM)"));
+    Serial.println(F("S. Save (save changes to EEPROM)"));
     Serial.println();
 
     // wait for user input from serial port, and act on that input
@@ -887,28 +890,28 @@ void menu()
     switch (choice)
     {
       case '1':
-        Serial.println("1. CSV");
-        Serial.println("2. ANSI");
-        Serial.println("3. LCD");
+        Serial.println(F("1. CSV"));
+        Serial.println(F("2. ANSI"));
+        Serial.println(F("3. LCD"));
         Serial.println();
         data_format = getChar() - '0';
         break;
 
       case '2':
-        Serial.println("1. English");
-        Serial.println("2. SI (metric)");
+        Serial.println(F("1. English"));
+        Serial.println(F("2. SI (metric)"));
         Serial.println();
         general_units = getChar() - '0';
         break;
 
       case '3':
-        Serial.print("Enter sample rate (every x seconds): ");
+        Serial.print(F("Enter sample rate (every x seconds): "));
         templong = getLong();
         if (templong > 4294966ul)
         {
           Serial.println();
           Serial.println();
-          Serial.println("SAMPLE RATE TOO LARGE (max = 4294966 seconds)");
+          Serial.println(F("SAMPLE RATE TOO LARGE (max = 4294966 seconds)"));
           Serial.println();
         }
         else
@@ -920,23 +923,23 @@ void menu()
         break;
 
       case '4':
-        Serial.println("1. mbar");
-        Serial.println("2. inches Hg");
-        Serial.println("3. PSI");
+        Serial.println(F("1. mbar"));
+        Serial.println(F("2. inches Hg"));
+        Serial.println(F("3. PSI"));
         Serial.println();
         pressure_units = getChar() - '0';
         break;
 
       case '5':
-        Serial.println("1. absolute");
-        Serial.println("2. relative");
+        Serial.println(F("1. absolute"));
+        Serial.println(F("2. relative"));
         Serial.println();
         pressure_type = getChar() - '0';
         reboot();
         break;
 
       case '6':
-        Serial.print("Enter altitude in integer meters: ");
+        Serial.print(F("Enter altitude in integer meters: "));
         altitude = getLong();
         Serial.println();
         Serial.println();
@@ -944,7 +947,7 @@ void menu()
         break;
 
       case '7':
-        Serial.print("Enter baud rate: ");
+        Serial.print(F("Enter baud rate: "));
         templong = getLong();
         Serial.println();
         Serial.println();
@@ -956,27 +959,40 @@ void menu()
         }
         else
         {
-          Serial.println("INVALID BAUD RATE (use 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200)");
+          Serial.println(F("INVALID BAUD RATE (use 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200)"));
           Serial.println();
         }
         break;
 
       case '8':
         rain = 0;
-        Serial.println("Rain counter zeroed");
+        Serial.println(F("Rain counter zeroed"));
         Serial.println();
         break;
 
       case '9':
-        Serial.println("1. yes");
-        Serial.println("2. no");
+        Serial.println(F("1. yes"));
+        Serial.println(F("2. no"));
         Serial.println();
         weather_meters_attached = (getChar() == '1');
         break;
 
+      case 'R':
+        Serial.println(F("Reset all settings to default?"));
+        Serial.println(F("Y to continue, any other key to cancel"));
+        Serial.println();
+        if (getChar() == 'Y')
+        {
+          resetDefaults();
+          Serial.println(F("Use the S option to save to EEPROM"));
+          Serial.println();
+        }
+        break;
+
       case 'S':
         storeEEPROMsettings();
-        // no break here! we want to fall through the 'Q' choice and quit
+        // no break here! we want to fall through to the next case
+
       case 'X':
         done = true;
         break;
@@ -1019,7 +1035,7 @@ long getLong()
       {
         // simulate a backspace - back up, print a space to erase character, and backspace again
         Serial.write(0x08);
-        Serial.print(" ");
+        Serial.print(F(" "));
         Serial.write(0x08);
         x--;
       }
@@ -1037,6 +1053,18 @@ long getLong()
   }
   // convert string to long using ASCII-to-long standard function
   return(atol(mystring));
+}
+
+void resetDefaults()
+{
+  data_format = ANSI;
+  general_units = ENGLISH;
+  sample_rate = 2; // sample rate (seconds per sample, 0 for as fast as possible)
+  pressure_type = RELATIVE;
+  altitude = 1596; // fixed weather station altitude in meters, for relative (sea level) pressure measurement
+  pressure_units = INHG;
+  weather_meters_attached = true; // true if we've hooked up SparkFun's Weather Meters (SEN-08942) (set to false to remove weather meters data from output)
+  baud_rate = 9600; // default baud rate
 }
 
 void storeEEPROMsettings()
@@ -1110,20 +1138,20 @@ void pass()
 // space-saver for pass/fail tests in ANSI output format
 // used by ANSI output format
 {
-  Serial.println("    "); // print spaces to erase "FAIL" if necessary
+  Serial.println(F("    ")); // print spaces to erase "FAIL" if necessary
 }
 
 void fail()
 // space-saver for pass/fail test in ANSI output format
 // used by ANSI output format
 {
-  Serial.println("FAIL");
+  Serial.println(F("FAIL"));
 }
 
 void reboot()
 // space-saver for menu reboot message
 {
-  Serial.println("REBOOT WEATHER BOARD TO PUT NEW SETTINGS INTO EFFECT");
+  Serial.println(F("REBOOT WEATHER BOARD TO PUT NEW SETTINGS INTO EFFECT"));
   Serial.println();
 }
 
@@ -1132,9 +1160,9 @@ void LCDclear()
 // used by LCD output format
 {
   LCDline1();
-  Serial.write("                ");
+  Serial.print(F("                "));
   LCDline2();
-  Serial.write("                ");
+  Serial.print(F("                "));
 }
 
 void LCDline1()
@@ -1155,11 +1183,11 @@ void LCDline2()
 
 void error(int errorcode) // save some space by printing out a generic error message
 {
-  Serial.print("ERROR #"); Serial.print(errorcode,DEC); Serial.println(", see sketch for cause");
+  Serial.print(F("ERROR #")); Serial.print(errorcode,DEC); Serial.println(F(", see sketch for cause"));
 }
 
 void printComma() // we do this a lot, it saves two bytes each time we call it
 {
-  Serial.print(",");
+  Serial.print(F(","));
 }
 
