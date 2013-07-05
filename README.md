@@ -6,9 +6,9 @@ This archive contains the latest sketch (firmware) that the USB Weather Board us
 
 Installation:
 
-Install the latest version of the Arduino IDE, available at www.arduino.cc.
+Install the latest version of the Arduino IDE, available at www.arduino.cc. This code was tested using Arduino versions 1.0.3 and 1.0.4.
 
-This sketch requires several nonstandard libraries (interface code):
+This sketch requires several nonstandard libraries (special device interface code):
 
 * SHT15x by Jonathan Oxer et.al.
 * SFE_BMP085 library by SparkFun
@@ -19,11 +19,11 @@ Installing the required files:
 
 TL;DR: The one-step procedure to install all of the required files is to drag the contents of the Arduino folder contained in this archive into your personal Arduino sketch folder (this is normally located in your personal documents folder.) This will create a "libraries" folder (containing the above libraries), and a "Weather_Board_3" folder containing the sketch.
 
-If there is already a "libraries" folder, go ahead and add the included libraries to it. If there are older versions of the above libraries, please overwrite them with the versions in this archive. If it is running, restart the Arduino IDE to get it to recognize the new libraries.
+If there is already a "libraries" folder, add the included libraries to it. If there are older versions of the above libraries in the folder, please replace them with the versions in this archive. If it is running, restart the Arduino IDE to get it to recognize the new libraries.
 
 Loading the firmware onto your USB Weather Board:
 
-1. Connect the USB Weather Board to your computer using a standard mini-B USB cable (available everywhere including www.sparkfun.com). Move both switches on the USB Weather Board to USB. The red LED should light up and your computer should automatically install the FTDI drivers and create a virtual COM port. If an error occurs, see the instructions at www.arduino.cc.
+1. Connect the USB Weather Board to your computer using a standard mini-B USB cable (available everywhere including www.sparkfun.com). Move both switches on the USB Weather Board to USB. The red LED should light up and your computer should automatically install the FTDI drivers and create a virtual COM port. If there is a problem installing the FTDI drivers, please see the instructions at www.arduino.cc.
 
 2. Start the Arduino IDE.
 
@@ -33,9 +33,11 @@ Loading the firmware onto your USB Weather Board:
 
 5. Load (up-arrow button) the Weather_Board_3.ino sketch into the Arduino IDE.
 
-6. Click on the Upload (right arrow) button at the top of the window. The code should compile then upload to the USB Weather Board. If there are any errors, double-check that you installed the required libraries to the correct place, and have restarted the Arduino IDE. If you continue to have problems, please contact SparkFun Technical Support (see the "Contact" section of www.sparkfun.com) and they will be happy to help you get up and running.
+6. Click on the Upload (right arrow) button at the top of the window. The code should compile then upload to the USB Weather Board. If there are any errors, double-check that you installed the required libraries to the correct folder, and have restarted the Arduino IDE. If you continue to have problems, please contact SparkFun Technical Support (see the "Contact" section of www.sparkfun.com) and they'll be happy to help you get up and running.
 
-Once the sketch is uploaded, the green LED will blink three times and the board will begin running. To check the output, you can open the Serial Monitor window (magnifying-glass button). To bring up the menu, send a 'Z' character to the board. See the datasheet for more information.
+Once the sketch is uploaded, the green LED will blink three times and the board will begin running. To check the output, you can use the terminal software of your choice, or open the Arduino IDE's Serial Monitor window (magnifying-glass button). Ensure that the Serial Monitor window is set to "9600 baud", and that line ending is set to "carriage return". To bring up the menu, type a 'Z' character into the entry box at the top of the window, and press send or hit return. See the datasheet for more information.
+
+If you have questions, don't hesistate to contact us at techsupport@sparkfun.com.
 
 Have fun!
 Your friends at SparkFun.

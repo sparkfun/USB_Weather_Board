@@ -7,6 +7,9 @@
 
 // Set Tools/Board to "Arduino Pro or Pro Mini (3.3V 8MHz) w/ ATmega328"
 
+// To use the Arduino serial monitor to access the menu, set the serial
+// monitor line ending to "Carriage Return" and speed to "9600 baud".
+
 // Uses the SHT15x library by Jonathan Oxer et.al.  https://github.com/practicalarduino/SHT1x
 // A special version is supplied with this software distribution.
 // Place in your Arduino sketchbook under "libraries/SHT1x"
@@ -24,6 +27,9 @@
 // -your friends at SparkFun
 
 // Revision history
+// 1.4 2013/7/5
+//     Changed all menu operations to completely support
+//     Arduino serial monitor (CR/NL ignored unless needed).
 // 1.3 2013/6/25
 //     Added code to prevent an intermittent lockup when rebooting; 
 //     now resets the humidity sensor connection before intializing
@@ -44,7 +50,7 @@
 
 // firmware version
 const char version_major = 1;
-const char version_minor = 3;
+const char version_minor = 4;
 
 // external libraries
 #include <SHT1x.h> // SHT15 humidity sensor library
@@ -886,7 +892,8 @@ void menu()
     // wait for user input from serial port, and act on that input
     // many of these are submenus, some require entering a number
     
-    choice = getChar(); // note that this will uppercase the character for you
+    choice = getSingleChar(); // note that this will uppercase the character for you
+ 
     switch (choice)
     {
       case '1':
@@ -894,14 +901,14 @@ void menu()
         Serial.println(F("2. ANSI"));
         Serial.println(F("3. LCD"));
         Serial.println();
-        data_format = getChar() - '0';
+        data_format = getSingleChar() - '0';
         break;
 
       case '2':
         Serial.println(F("1. English"));
         Serial.println(F("2. SI (metric)"));
         Serial.println();
-        general_units = getChar() - '0';
+        general_units = getSingleChar() - '0';
         break;
 
       case '3':
@@ -927,14 +934,14 @@ void menu()
         Serial.println(F("2. inches Hg"));
         Serial.println(F("3. PSI"));
         Serial.println();
-        pressure_units = getChar() - '0';
+        pressure_units = getSingleChar() - '0';
         break;
 
       case '5':
         Serial.println(F("1. absolute"));
         Serial.println(F("2. relative"));
         Serial.println();
-        pressure_type = getChar() - '0';
+        pressure_type = getSingleChar() - '0';
         reboot();
         break;
 
@@ -974,14 +981,14 @@ void menu()
         Serial.println(F("1. yes"));
         Serial.println(F("2. no"));
         Serial.println();
-        weather_meters_attached = (getChar() == '1');
+        weather_meters_attached = (getSingleChar() == '1');
         break;
 
       case 'R':
         Serial.println(F("Reset all settings to default?"));
         Serial.println(F("Y to continue, any other key to cancel"));
         Serial.println();
-        if (getChar() == 'Y')
+        if (getSingleChar() == 'Y')
         {
           resetDefaults();
           Serial.println(F("Use the S option to save to EEPROM"));
@@ -1011,7 +1018,7 @@ char getChar()
 }
 
 long getLong()
-// wait for a number to be input (end with return), allows backspace and negative
+// wait for a character to be input (end with return), allows backspace
 {
   char mystring[10];
   char mychar;
@@ -1025,9 +1032,13 @@ long getLong()
     mychar = getChar();
     if ((mychar == 0x0D) || (mychar == 0x0A)) // carriage return or line feed?
     {
-      // terminate the string with 0x00 and exit
-      mystring[x] = 0;
-      done = true;
+      // if this is the first character in the string, ignore it
+      if (x > 0)
+      {
+        // otherwise, terminate the string with 0x00 and exit
+        mystring[x] = 0;
+        done = true;
+      }
     }
     else
     {
@@ -1039,9 +1050,9 @@ long getLong()
         Serial.write(0x08);
         x--;
       }
-      else // a real character?
+      else // a valid character?
       {
-//        if ((mychar != 0x08) && (x < 10)) 
+        // add it to the string
         if (x < 10)
         {
           Serial.print(mychar);
@@ -1051,8 +1062,19 @@ long getLong()
       }
     }
   }
-  // convert string to long using ASCII-to-long standard function
+  // convert string to long value and return
   return(atol(mystring));
+}
+
+char getSingleChar()
+{
+  char mychar;
+  
+  // read serial characters until one isn't carriage return or newline
+  do
+    mychar = getChar();
+  while ((mychar == 0x0D) || (mychar == 0x0A));
+  return(mychar);
 }
 
 void resetDefaults()
@@ -1151,7 +1173,7 @@ void fail()
 void reboot()
 // space-saver for menu reboot message
 {
-  Serial.println(F("REBOOT WEATHER BOARD TO PUT NEW SETTINGS INTO EFFECT"));
+  Serial.println(F("SAVE TO EEPROM (S) AND REBOOT TO PUT SETTINGS INTO EFFECT"));
   Serial.println();
 }
 
