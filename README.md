@@ -1,3 +1,5 @@
+**NOTE: This product has been retired from our catalog. The information contained here is for reference only. No support is guaranteed. For a new version, please check out our [Weather Shield](https://www.sparkfun.com/products/12081).**# #
+
 ##USB Weather Board [(SEN-10586)](https://www.sparkfun.com/products/10586)
 
 <img src="https://dlnmh9ip6v2uc.cloudfront.net/images/products/1/0/5/8/6/10586-05b.jpg" alt="USB Weather Board" height="300" width="300">
