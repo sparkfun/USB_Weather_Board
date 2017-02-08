@@ -1,4 +1,4 @@
-**NOTE: This product has been retired from our catalog. The information contained here is for reference only. No support is guaranteed. For a new version, please check out our [Weather Shield](https://www.sparkfun.com/products/12081).**# #
+# **NOTE: This product has been retired from our catalog. The information contained here is for reference only. No support is guaranteed. For a new version, please check out our [Weather Shield](https://www.sparkfun.com/products/12081).**# #
 
 ##USB Weather Board [(SEN-10586)](https://www.sparkfun.com/products/10586)
 
