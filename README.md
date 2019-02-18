@@ -1,6 +1,11 @@
-# **NOTE: This product has been retired from our catalog. The information contained here is for reference only. No support is guaranteed. For a new version, please check out our [Weather Shield](https://www.sparkfun.com/products/12081).**# #
+# **NOTE: This product has been retired from our catalog. The information contained here is for reference only. No support is guaranteed. For a new version, please check out our [Weather Shield](https://www.sparkfun.com/products/12081).**
 
-##USB Weather Board [(SEN-10586)](https://www.sparkfun.com/products/10586)
+*If you are looking for more up-to-date info, please check out some of these resources to see how other users are still hacking and improving on this product.*
+* *[SparkFun Forum](https://forum.sparkfun.com/)*
+* *[Comments Here on GitHub](https://github.com/sparkfun/USB_Weather_Board/issues)*
+* *[IRC Channel](https://www.sparkfun.com/news/263)*
+
+## USB Weather Board [(SEN-10586)](https://www.sparkfun.com/products/10586)
 
 <img src="https://dlnmh9ip6v2uc.cloudfront.net/images/products/1/0/5/8/6/10586-05b.jpg" alt="USB Weather Board" height="300" width="300">
 
@@ -14,7 +19,7 @@ Github repository: [https://github.com/sparkfun/USB\_Weather\_Board](https://git
 
 This archive contains the latest sketch (firmware) that the USB Weather Board uses to sample the sensors and output data. You can use this sketch as-is, modify it to suit your own purposes, or write your own sketches from scratch. See the datasheet and schematics for more information.
 
-###Installation:
+### Installation:
 
 If you haven't, install the free Arduino IDE, available at [www.arduino.cc](http://www.arduino.cc). This code was tested using Arduino versions 1.0.3, 1.0.4 and 1.0.5.
 
@@ -25,13 +30,13 @@ This sketch requires several nonstandard libraries (special device interface cod
 	
 These libraries are included in this archive, and must be installed onto your computer in order for the code to compile correctly. See the instructions below.
 
-####Installing the required files:
+#### Installing the required files:
 
 TL;DR: The one-step procedure to install all of the required files is to drag the contents of the Arduino folder contained in this archive into your personal Arduino sketch folder (this is normally located in your personal documents folder.) This will create a "libraries" folder (containing the above libraries), and a "Weather\_Board\_3" folder containing the sketch.
 
 If there is already a "libraries" folder, add the included libraries to it. If there are older versions of the above libraries in the folder, please replace them with the versions in this archive. If it is running, restart the Arduino IDE to get it to recognize the new libraries.
 
-####Loading the firmware onto your USB Weather Board:
+#### Loading the firmware onto your USB Weather Board:
 
 1. Connect the USB Weather Board to your computer using a standard mini-B USB cable (available everywhere including www.sparkfun.com). Move both switches on the USB Weather Board to USB. The red LED should light up and your computer should automatically install the FTDI drivers and create a virtual COM port. If there is a problem installing the FTDI drivers, please see the instructions at www.arduino.cc.
 
@@ -52,7 +57,7 @@ If you have questions, don't hesistate to contact us at techsupport@sparkfun.com
 Have fun!
 Your friends at SparkFun.
 
-###Revision history:
+### Revision history:
 
 1.4 2013/7/5
 
